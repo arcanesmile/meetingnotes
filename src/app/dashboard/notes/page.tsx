@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, FileText, Users } from "lucide-react"
 import { formatDateRelative } from "@/lib/utils"
-import { DeleteNoteButton } from "@/components/dashboard/delete-note-button"
+import { NoteActions } from "./note-actions"
 
 export default async function NotesPage() {
   const session = await auth()
@@ -91,9 +91,9 @@ export default async function NotesPage() {
                         {note.summary && <span className="text-primary">AI processed</span>}
                       </div>
                     </div>
-                    <div className="opacity-0 group-hover:opacity-100" onClick={(e) => e.preventDefault()}>
-                      {note.userId === userId && <DeleteNoteButton noteId={note.id} />}
-                    </div>
+                    {note.userId === userId && (
+  <NoteActions noteId={note.id} />
+)}
                   </CardContent>
                 </Card>
               </Link>

@@ -3,41 +3,98 @@ interface NoteSummaryResult {
   actionItems: string
 }
 
-export async function summarizeNote(content: string): Promise<NoteSummaryResult> {
-  const prompt = `You are a professional meeting notes assistant. Analyze the following notes and provide:
+const MODEL = "gemini-2.5-flash"
+
+export async function summarizeNote(
+  content: string
+): Promise<NoteSummaryResult> {
+  const apiKey = process.env.GEMINI_API_KEY
+
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is missing")
+  }
+
+  const prompt = `
+You are a professional meeting notes assistant.
+
+Analyze the following notes and provide:
+
 1. A concise summary (2-3 paragraphs)
 2. A list of action items with assignees if mentioned
 
-Format your response as JSON with keys: "summary" and "actionItems".
+Return ONLY valid JSON in this format:
+
+{
+  "summary": "...",
+  "actionItems": "..."
+}
 
 Notes:
-${content}`
+${content}
+`
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-    }
-  )
+  const controller = new AbortController()
 
-  if (!res.ok) {
-    const err = await res.text().catch(() => "unknown error")
-    throw new Error(`Gemini API error ${res.status}: ${err}`)
-  }
-
-  const data = await res.json()
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ""
+  const timeout = setTimeout(() => {
+    controller.abort()
+  }, 30000)
 
   try {
-    const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim()
-    const parsed = JSON.parse(cleaned) as NoteSummaryResult
-    return {
-      summary: parsed.summary || "No summary generated.",
-      actionItems: parsed.actionItems || "No action items found.",
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+        }),
+      }
+    )
+
+    if (!res.ok) {
+      const errorText = await res.text()
+
+      throw new Error(
+        `Gemini API Error ${res.status}: ${errorText}`
+      )
     }
-  } catch {
-    return { summary: text, actionItems: "No action items found." }
+
+    const data = await res.json()
+
+    const text =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ""
+
+    try {
+      const cleaned = text
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim()
+
+      const parsed = JSON.parse(cleaned)
+
+      return {
+        summary: parsed.summary || "No summary generated.",
+        actionItems:
+          parsed.actionItems || "No action items found.",
+      }
+    } catch {
+      return {
+        summary: text,
+        actionItems: "No action items found.",
+      }
+    }
+  } finally {
+    clearTimeout(timeout)
   }
 }
