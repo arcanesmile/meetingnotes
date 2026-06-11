@@ -118,7 +118,7 @@ export function DashboardSidebar({
             className="flex min-w-0 items-center gap-2"
           >
             <IMAGE
-              src="/logo.png"
+              src="/logo.jpg"
               alt="Logo"
               width={32}
               height={32}
