@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { redirect } from "next/navigation"
 
 export async function POST() {
@@ -15,7 +15,7 @@ export async function POST() {
     redirect("/dashboard/settings")
   }
 
-  const portalSession = await stripe.billingPortal.sessions.create({
+  const portalSession = await getStripe().billingPortal.sessions.create({
     customer: user.stripeCustomerId,
     return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`,
   })

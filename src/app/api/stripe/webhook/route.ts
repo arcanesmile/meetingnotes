@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { stripe } from "@/lib/stripe"
+import { getStripe } from "@/lib/stripe"
 import { prisma } from "@/lib/prisma"
 import type Stripe from "stripe"
 
 async function getSubscription(id: string): Promise<Stripe.Subscription> {
-  const result = await stripe.subscriptions.retrieve(id)
+  const result = await getStripe().subscriptions.retrieve(id)
   return result as unknown as Stripe.Subscription
 }
 
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event
 
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!)
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
