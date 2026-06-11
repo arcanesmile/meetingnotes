@@ -43,38 +43,83 @@ export default function CreateTeamPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="flex items-center gap-4 mb-6">
+  <div className="min-h-screen flex items-center justify-center px-4 py-8 md:py-12">
+
+    <div className="w-full max-w-md">
+
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+
         <Link href="/dashboard/teams">
           <Button variant="ghost" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Create Team</h1>
+
+        <h1 className="text-xl md:text-2xl font-bold">
+          Create Team
+        </h1>
       </div>
 
-      <Card>
+      {/* Card */}
+      <Card className="shadow-sm">
+
         <CardHeader>
-          <CardTitle>Team Name</CardTitle>
-          <CardDescription>Give your team a name to get started</CardDescription>
+          <CardTitle className="text-base md:text-lg">
+            Team Name
+          </CardTitle>
+
+          <CardDescription>
+            Give your team a name to get started
+          </CardDescription>
         </CardHeader>
+
         <CardContent>
+
           <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* Input */}
             <input
-              className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+              className="
+                flex h-11 w-full rounded-md
+                border border-input bg-transparent
+                px-3 py-2 text-sm
+                outline-none
+                focus:ring-2 focus:ring-primary/30
+                focus:border-primary
+                transition
+              "
               placeholder="e.g. Marketing Team"
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoFocus
             />
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading || !name.trim()}>
-              {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading || !name.trim()}
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+
               {loading ? "Creating..." : "Create Team"}
             </Button>
+
           </form>
+
         </CardContent>
       </Card>
     </div>
-  )
+  </div>
+)
 }

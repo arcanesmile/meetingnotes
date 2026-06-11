@@ -6,7 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Users, Loader2 } from "lucide-react"
 
-export function AcceptInviteForm({ token, teamName }: { token: string; teamName: string }) {
+export function AcceptInviteForm({
+  token,
+  teamName,
+}: {
+  token: string
+  teamName: string
+}) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -16,7 +22,10 @@ export function AcceptInviteForm({ token, teamName }: { token: string; teamName:
     setError("")
 
     try {
-      const res = await fetch(`/api/teams/invite/${token}`, { method: "POST" })
+      const res = await fetch(`/api/teams/invite/${token}`, {
+        method: "POST",
+      })
+
       const data = await res.json()
 
       if (res.ok) {
@@ -33,27 +42,55 @@ export function AcceptInviteForm({ token, teamName }: { token: string; teamName:
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader>
-          <div className="flex justify-center mb-2">
-            <Users className="h-12 w-12 text-primary" />
+    <div className="min-h-screen flex items-center justify-center px-4 py-10">
+
+      <Card className="w-full max-w-sm sm:max-w-md text-center">
+
+        <CardHeader className="space-y-3">
+
+          <div className="flex justify-center">
+            <Users className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Join {teamName}</CardTitle>
-          <CardDescription>
-            You have been invited to join this team. Accept to start collaborating on meeting notes.
+
+          <CardTitle className="text-xl sm:text-2xl">
+            Join {teamName}
+          </CardTitle>
+
+          <CardDescription className="text-sm sm:text-base">
+            You’ve been invited to join this team.
+            <br />
+            Accept to start collaborating on meeting notes.
           </CardDescription>
+
         </CardHeader>
-        <CardContent className="space-y-3">
+
+        <CardContent className="space-y-4">
+
+          {/* Error */}
           {error && (
-            <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">{error}</p>
+            <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+              {error}
+            </div>
           )}
-          <Button className="w-full" size="lg" onClick={handleAccept} disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+
+          {/* CTA */}
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={handleAccept}
+            disabled={loading}
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : null}
+
             {loading ? "Joining..." : "Accept Invite"}
           </Button>
+
         </CardContent>
+
       </Card>
+
     </div>
   )
 }

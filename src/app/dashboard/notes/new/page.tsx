@@ -35,7 +35,7 @@ export default function NewNotePage() {
         setTeams(data)
         if (preselectedTeamId) setSelectedTeamId(preselectedTeamId)
       })
-      .catch(() => {})
+      .catch(() => { })
   }, [preselectedTeamId])
 
   async function handleSummarize() {
@@ -82,41 +82,95 @@ export default function NewNotePage() {
   const selectedTeam = teams.find((t) => t.id === selectedTeamId)
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href={selectedTeamId ? `/dashboard/teams/${selectedTeamId}` : "/dashboard/notes"}>
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div className="flex-1">
+    <div className="max-w-6xl mx-auto px-4 py-4 md:px-6 lg:px-8 space-y-6">
+
+      {/* Header */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+
+        {/* Back + Title */}
+        <div className="flex items-center gap-3 flex-1">
+          <Link
+            href={
+              selectedTeamId
+                ? `/dashboard/teams/${selectedTeamId}`
+                : "/dashboard/notes"
+            }
+          >
+            <Button variant="ghost" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+
           <input
-            className="text-3xl font-bold bg-transparent border-none outline-none w-full placeholder:text-muted-foreground/50"
+            className="
+            flex-1
+            bg-transparent
+            border-none
+            outline-none
+            font-bold
+            w-full
+            text-2xl
+            md:text-3xl
+            placeholder:text-muted-foreground/50
+          "
             placeholder="Meeting Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full lg:w-auto">
+
           {teams.length > 0 && (
-            <div className="relative">
-              <Button variant="outline" size="sm" onClick={() => setShowTeamSelect(!showTeamSelect)}>
+            <div className="relative w-full sm:w-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto"
+                onClick={() => setShowTeamSelect(!showTeamSelect)}
+              >
                 <Users className="h-4 w-4 mr-2" />
                 {selectedTeam ? selectedTeam.name : "Personal"}
               </Button>
+
               {showTeamSelect && (
-                <div className="absolute right-0 top-full mt-1 w-48 bg-card border rounded-lg shadow-lg z-10 py-1">
+                <div
+                  className="
+                  absolute
+                  left-0
+                  sm:right-0
+                  sm:left-auto
+                  top-full
+                  mt-1
+                  w-full
+                  sm:w-48
+                  bg-card
+                  border
+                  rounded-lg
+                  shadow-lg
+                  z-10
+                  py-1
+                "
+                >
                   <button
                     className="w-full text-left px-3 py-2 text-sm hover:bg-accent"
-                    onClick={() => { setSelectedTeamId(null); setShowTeamSelect(false) }}
+                    onClick={() => {
+                      setSelectedTeamId(null)
+                      setShowTeamSelect(false)
+                    }}
                   >
                     Personal
                   </button>
+
                   {teams.map((team) => (
                     <button
                       key={team.id}
                       className="w-full text-left px-3 py-2 text-sm hover:bg-accent"
-                      onClick={() => { setSelectedTeamId(team.id); setShowTeamSelect(false) }}
+                      onClick={() => {
+                        setSelectedTeamId(team.id)
+                        setShowTeamSelect(false)
+                      }}
                     >
                       {team.name}
                     </button>
@@ -125,65 +179,102 @@ export default function NewNotePage() {
               )}
             </div>
           )}
-          <Button variant="outline" onClick={handleSummarize} disabled={summarizing || !content.trim()}>
+
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={handleSummarize}
+            disabled={summarizing || !content.trim()}
+          >
             {summarizing ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Sparkles className="h-4 w-4 mr-2" />
             )}
+
             {summarizing ? "Processing..." : "AI Summarize"}
           </Button>
-          <Button onClick={handleSave} disabled={saving || !title.trim() || !content.trim()}>
+
+          <Button
+            className="w-full sm:w-auto"
+            onClick={handleSave}
+            disabled={saving || !title.trim() || !content.trim()}
+          >
             <Save className="h-4 w-4 mr-2" />
             {saving ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
 
-      <Card>
+      {/* Notes Card */}
+      <Card className="animate-fade-in-up transition-all duration-200 hover:shadow-md" style={{ animationDelay: "100ms" }}>
         <CardHeader>
-          <CardTitle className="text-base">Meeting Notes</CardTitle>
+          <CardTitle className="text-base">
+            Meeting Notes
+          </CardTitle>
         </CardHeader>
+
         <CardContent>
           <textarea
-            className="w-full min-h-[300px] bg-transparent border-none outline-none resize-none text-sm leading-relaxed"
-            placeholder="Paste or type your meeting notes here...
+            className="
+            w-full
+            min-h-[250px]
+            md:min-h-[350px]
+            lg:min-h-[450px]
+            bg-transparent
+            border-none
+            outline-none
+            resize-none
+            text-sm
+            leading-relaxed
+          "
+            placeholder={`Paste or type your meeting notes here...
 
 Example:
 - Discussed Q3 marketing strategy
 - John will draft the social media plan by Friday
 - Budget approved for LinkedIn ads ($5k)
-- Next meeting: Wednesday at 2pm"
+- Next meeting: Wednesday at 2pm`}
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
         </CardContent>
       </Card>
 
+      {/* AI Summary */}
       {summary && (
-        <Card>
+        <Card className="animate-fade-in-up transition-all duration-200 hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />
               AI Summary
             </CardTitle>
           </CardHeader>
+
           <CardContent>
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{summary}</p>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">
+              {summary}
+            </p>
           </CardContent>
         </Card>
       )}
 
+      {/* Action Items */}
       {actionItems && (
-        <Card>
+        <Card className="animate-fade-in-up transition-all duration-200 hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Badge variant="secondary" className="rounded-sm">TODO</Badge>
+              <Badge variant="secondary" className="rounded-sm">
+                TODO
+              </Badge>
               Action Items
             </CardTitle>
           </CardHeader>
+
           <CardContent>
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{actionItems}</p>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">
+              {actionItems}
+            </p>
           </CardContent>
         </Card>
       )}
