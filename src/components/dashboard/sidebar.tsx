@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation"
 import { useEffect, useRef } from "react"
 import { signOut } from "next-auth/react"
 import { cn } from "@/lib/utils"
+import IMAGE from "next/image"
 import {
-  Brain,
   FileText,
   Settings,
   Users,
@@ -117,11 +117,12 @@ export function DashboardSidebar({
             href="/dashboard"
             className="flex min-w-0 items-center gap-2"
           >
-            <Brain className="h-6 w-6 shrink-0 text-primary" />
-
-            <span className="truncate text-lg font-bold">
-              MeetNotes
-            </span>
+            <IMAGE
+              src="/logo.png"
+              alt="Logo"
+              width={32}
+              height={32}
+            />
           </Link>
 
           <button
