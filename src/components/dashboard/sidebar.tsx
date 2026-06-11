@@ -123,6 +123,9 @@ export function DashboardSidebar({
               width={32}
               height={32}
             />
+            <span className="hidden text-lg font-bold sm:block">
+              MeetNotes
+            </span>
           </Link>
 
           <button
