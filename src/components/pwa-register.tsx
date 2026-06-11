@@ -5,7 +5,9 @@ import { useEffect } from "react"
 export function PwaRegister() {
   useEffect(() => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js")
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((r) => r.unregister())
+      })
     }
   }, [])
 
